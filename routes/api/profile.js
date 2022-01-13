@@ -58,7 +58,7 @@ router.post(
       if(bio) profileFields.bio = bio; 
       if(status) profileFields.status = status; 
       if(githubusername) profileFields.githubusername = githubusername; 
-      if(skills) {profileFields.skills = skills.split(',').map(skill => skill.trim()); }
+      if(skills) {profileFields.skills = skills.map(skill => skill.trim()); }
       console.log(skills);
       //Build social object
       profileFields.social = {}
@@ -258,5 +258,32 @@ router.delete('/education/:edu_id', auth, async(req, res) => {
     res.status(500).send('Server Error');
   }
 });
+router.put(
+  '/appjob',
+  auth,
+
+  async (req, res) => {
+    const {
+      
+    } = req.body;
+    
+    const newjob = {
+      job : req.job._id
+    }
+
+    try {
+      const profile = await Profile.findById(req.profile._id );
+// push == unshift
+      profile.JobsApplied.unshift(newjob);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 module.exports = router;
